@@ -1,0 +1,15 @@
+[ALL_LINUX]
+ansible-centos ansible_host=10.166.0.22
+ansible-centos-1 ansible_host=10.166.0.25
+ansible-ubuntu ansible_host=10.166.0.24
+
+[centos_servers]
+ansible-centos ansible_host=10.166.0.22 
+ansible-centos-1 ansible_host=10.166.0.25
+
+[ubuntu_servers]
+ansible-centos-1 ansible_host=10.166.0.24
+
+[servers_all:children]
+centos_servers
+ubuntu_servers

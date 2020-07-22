@@ -1,0 +1,7 @@
+---
+
+- name: Install Apache and upload the Site
+  hosts: "{{ MYHOSTS }}"
+  become: true
+  roles:
+    - { role: deploy_apache_web, when: ansible_system == 'Linux' }

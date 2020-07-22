@@ -1,0 +1,44 @@
+---
+# tasks file for deploy_apache_web
+
+- name: Check and print working servers
+  debug: var=ansible_os_family
+
+- block: #redhat
+
+    - name: Check httpd
+      shell: httpd -v
+      register: httpd_version
+      ignore_errors: yes
+
+    - name: Install Apache on RedHat
+      yum: name=httpd state=present
+      when: "'command not found' in httpd_version.stderr"
+
+    - name: Start and Enable Apache on Redhat
+      service: name=httpd state=started enabled=yes
+
+  when: ansible_os_family == "RedHat"
+
+- block: #debian
+
+    - name: Check apache2
+      shell: apache2 -v
+      register: apache2_version
+      ignore_errors: yes
+    
+    - name: Install Apache on Debian
+      apt: name=apache2 state=present
+      when: "'not found' in apache2_version.stderr"
+
+    - name: Start and Enable Apache on Debian
+      service: name=apache2 state=started enabled=yes
+      
+  when: ansible_os_family == "Debian"
+
+- name: Copy the Site
+  copy: src={{ role_path }}/files/html dest={{ destin_folder }} mode=0775
+  notify:
+  - Restart httpd
+  - Restart Apache2
+      
